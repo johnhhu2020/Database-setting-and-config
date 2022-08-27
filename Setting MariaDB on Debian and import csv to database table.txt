@@ -1,0 +1,240 @@
+jhu@debian:~$ su
+Password: 
+root@debian:/home/jhu# sudo apt install mariadb-server
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+The following additional packages will be installed:
+  galera-4 gawk libaio1 libcgi-fast-perl libcgi-pm-perl
+  libconfig-inifiles-perl libdbd-mariadb-perl libdbi-perl libfcgi-bin
+  libfcgi-perl libfcgi0ldbl libhtml-template-perl libmariadb3 libsigsegv2
+  libterm-readkey-perl mariadb-client-10.5 mariadb-client-core-10.5
+  mariadb-common mariadb-server-10.5 mariadb-server-core-10.5 mysql-common
+  rsync socat
+Suggested packages:
+  gawk-doc libmldbm-perl libnet-daemon-perl libsql-statement-perl
+  libipc-sharedcache-perl mailx mariadb-test netcat-openbsd openssh-server
+The following NEW packages will be installed:
+  galera-4 gawk libaio1 libcgi-fast-perl libcgi-pm-perl
+  libconfig-inifiles-perl libdbd-mariadb-perl libdbi-perl libfcgi-bin
+  libfcgi-perl libfcgi0ldbl libhtml-template-perl libmariadb3 libsigsegv2
+  libterm-readkey-perl mariadb-client-10.5 mariadb-client-core-10.5
+  mariadb-common mariadb-server mariadb-server-10.5 mariadb-server-core-10.5
+  mysql-common rsync socat
+0 upgraded, 24 newly installed, 0 to remove and 0 not upgraded.
+Need to get 17.1 MB of archives.
+After this operation, 157 MB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+
+
+root@debian:/home/jhu# sudo mysql_secure_installation
+
+NOTE: RUNNING ALL PARTS OF THIS SCRIPT IS RECOMMENDED FOR ALL MariaDB
+      SERVERS IN PRODUCTION USE!  PLEASE READ EACH STEP CAREFULLY!
+
+In order to log into MariaDB to secure it, we'll need the current
+password for the root user. If you've just installed MariaDB, and
+haven't set the root password yet, you should just press enter here.
+
+Enter current password for root (enter for none): 
+OK, successfully used password, moving on...
+
+Setting the root password or using the unix_socket ensures that nobody
+can log into the MariaDB root user without the proper authorisation.
+
+You already have your root account protected, so you can safely answer 'n'.
+
+Switch to unix_socket authentication [Y/n] n
+ ... skipping.
+
+You already have your root account protected, so you can safely answer 'n'.
+
+Change the root password? [Y/n] y
+New password: 
+Re-enter new password: 
+Password updated successfully!
+Reloading privilege tables..
+ ... Success!
+
+
+By default, a MariaDB installation has an anonymous user, allowing anyone
+to log into MariaDB without having to have a user account created for
+them.  This is intended only for testing, and to make the installation
+go a bit smoother.  You should remove them before moving into a
+production environment.
+
+Remove anonymous users? [Y/n] y
+ ... Success!
+
+Normally, root should only be allowed to connect from 'localhost'.  This
+ensures that someone cannot guess at the root password from the network.
+
+Disallow root login remotely? [Y/n] y
+ ... Success!
+
+By default, MariaDB comes with a database named 'test' that anyone can
+access.  This is also intended only for testing, and should be removed
+before moving into a production environment.
+
+Remove test database and access to it? [Y/n] y
+ - Dropping test database...
+ ... Success!
+ - Removing privileges on test database...
+ ... Success!
+
+Reloading the privilege tables will ensure that all changes made so far
+will take effect immediately.
+
+Reload privilege tables now? [Y/n] y
+ ... Success!
+
+Cleaning up...
+
+All done!  If you've completed all of the above steps, your MariaDB
+installation should now be secure.
+
+Thanks for using MariaDB!
+
+
+
+root@debian:/home/jhu# mariadb
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 38
+Server version: 10.5.15-MariaDB-0+deb11u1 Debian 11
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> select host, user, password from mysql.user;
++-----------+-------------+-------------------------------------------+
+| Host      | User        | Password                                  |
++-----------+-------------+-------------------------------------------+
+| localhost | mariadb.sys |                                           |
+| localhost | root        | *DCCB04FE336B166F373D76CCCEAE2FBF8B91934B |
+| localhost | mysql       | invalid                                   |
++-----------+-------------+-------------------------------------------+
+3 rows in set (0.001 sec)
+
+MariaDB [(none)]> 
+
+
+
+root@debian:/home/jhu# mysql -u root -p
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 40
+Server version: 10.5.15-MariaDB-0+deb11u1 Debian 11
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+MariaDB [(none)]> select host, user, password from mysql.user;
++-----------+-------------+-------------------------------------------+
+| Host      | User        | Password                                  |
++-----------+-------------+-------------------------------------------+
+| localhost | mariadb.sys |                                           |
+| localhost | root        | *DCCB04FE336B166F373D76CCCEAE2FBF8B91934B |
+| localhost | mysql       | invalid                                   |
++-----------+-------------+-------------------------------------------+
+3 rows in set (0.002 sec)
+
+MariaDB [(none)]> CREATE USER 'data'@'localhost' IDENTIFIED BY 'PassWord001';
+Query OK, 0 rows affected (0.008 sec)
+
+MariaDB [(none)]> select host, user, password from mysql.user;
++-----------+-------------+-------------------------------------------+
+| Host      | User        | Password                                  |
++-----------+-------------+-------------------------------------------+
+| localhost | mariadb.sys |                                           |
+| localhost | root        | *DCCB04FE336B166F373D76CCCEAE2FBF8B91934B |
+| localhost | mysql       | invalid                                   |
+| localhost | data        | *6D0A6924237BF60569B6EFAF0D17243F5EDA2D30 |
++-----------+-------------+-------------------------------------------+
+4 rows in set (0.002 sec)
+
+
+
+
+MariaDB [(none)]> SELECT CURRENT_DATE();
++----------------+
+| CURRENT_DATE() |
++----------------+
+| 2022-08-27     |
++----------------+
+1 row in set (0.000 sec)
+
+MariaDB [(none)]> SELECT CURRENT_USER();
++----------------+
+| CURRENT_USER() |
++----------------+
+| data@localhost |
++----------------+
+1 row in set (0.000 sec)
+
+
+
+
+MariaDB [(none)]> source /home/jhu/Downloads/play_records_table_creating.SQL
+ERROR 1046 (3D000) at line 1 in file: '/home/jhu/Downloads/play_records_table_creating.SQL': No database selected
+MariaDB [(none)]> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
++--------------------+
+3 rows in set (0.054 sec)
+
+MariaDB [(none)]> CREATE DATABASE DXXData;
+Query OK, 1 row affected (0.012 sec)
+
+
+
+
+MariaDB [(none)]> USE DXXData
+Database changed
+
+
+
+ariaDB [DXXData]> source /home/jhu/Downloads/play_records_table_creating.SQL; 
+Query OK, 0 rows affected (0.066 sec)
+
+MariaDB [DXXData]> SHOW TABLES;
++-------------------+
+| Tables_in_DXXData |
++-------------------+
+|   play_records    |
++-------------------+
+1 row in set (0.002 sec)
+
+
+
+
+MariaDB [DXXData]> LOAD DATA LOCAL INFILE '/home/jhu/Downloads/play_records_3_month.csv' INTO TABLE play_records;
+Query OK, 1040812 rows affected, 65535 warnings (13.448 sec)
+Records: 1040812  Deleted: 0  Skipped: 0  Warnings: 1244606
+
+
+
+
+MariaDB [DXXData]> SELECT play_records_id, rsid, user_id, item_id, FROM_UNIXTIME(time/1000) Time, state, bigPower, grab  FROM play_records LIMIT 10;
++-----------------+---------+---------+---------+--------------------------+-------+----------+------+
+| play_records_id | rsid    | user_id | item_id | Time                     | state | bigPower | grab |
++-----------------+---------+---------+---------+--------------------------+-------+----------+------+
+|         3520892 | 2766433 | 2369425 |    1601 | 2022-08-21 00:16:23.9370 |     1 |        0 |   24 |
+|         3491155 | 2713232 | 2362722 |    1601 | 2022-08-17 15:29:38.0620 |     0 |        0 |   23 |
+|         3513272 | 2753394 | 2368514 |    1601 | 2022-08-20 07:56:00.7680 |     0 |        0 |   22 |
+|         3520766 | 2766110 | 2369425 |    1601 | 2022-08-21 00:02:52.0710 |     0 |        0 |   23 |
+|         3520774 | 2766110 | 2369425 |    1601 | 2022-08-21 00:03:16.4450 |     0 |        0 |   23 |
+|         3520777 | 2766110 | 2369425 |    1601 | 2022-08-21 00:03:47.2300 |     0 |        0 |   23 |
+|         3520788 | 2766170 | 2369425 |    1601 | 2022-08-21 00:05:09.4740 |     0 |        0 |   22 |
+|         3520793 | 2766170 | 2369425 |    1601 | 2022-08-21 00:05:32.5330 |     0 |        0 |   22 |
+|         3520807 | 2766214 | 2369425 |    1601 | 2022-08-21 00:07:09.1960 |     0 |        0 |   19 |
+|         3520813 | 2766240 | 2369425 |    1601 | 2022-08-21 00:07:52.5220 |     0 |        0 |   24 |
++-----------------+---------+---------+---------+--------------------------+-------+----------+------+
+10 rows in set (0.014 sec)
+
+
